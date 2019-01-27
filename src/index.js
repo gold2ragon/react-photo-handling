@@ -27,6 +27,12 @@ const photo_sources = [
 ];
 const photos = photo_sources;
 const selected_photos = [];
+const getIndex = (array, obj) => {
+  for(var i = 0; i < array.length; i++) {
+    if(array[i].src == obj.src) return i;
+  }
+  return -1;
+}
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -37,21 +43,24 @@ class App extends React.Component {
       button: 'Next', 
       label:'select all images with' 
     };
+    this.pre_selected_photos = [];
     this.speakers = speakers;
     this.selectPhoto = this.selectPhoto.bind(this);
     this.Next = this.Next.bind(this);
   }
+  
   selectPhoto(event, obj) {
     let photos = this.state.photos;
+    
+    this.pre_selected_photos = JSON.parse(JSON.stringify(this.pre_selected_photos));
     photos[obj.index].selected = !photos[obj.index].selected;
-    let selected_photos = this.state.selected_photos;
     if(photos[obj.index].selected) {
-      selected_photos.push(obj.photo);
+      this.pre_selected_photos.push(obj.photo);
     }
     else {
-      selected_photos.pop(obj.photo);
-    }
-    this.setState({ selected_photos: selected_photos });
+      this.pre_selected_photos.splice(getIndex(this.pre_selected_photos, obj.photo), 1);
+    }    
+    this.setState({ photos: photos });
   }
   toggleSelect() {
     let photos = this.state.photos.map((photo, index) => {
@@ -60,11 +69,27 @@ class App extends React.Component {
     this.setState({ photos: photos, selectAll: !this.state.selectAll });
   }
   Next() {
-    this.setState({ currentSpeakerId: this.state.currentSpeakerId + 1 })
-    if(this.state.currentSpeakerId == 3) {
+    this.setState({ selected_photos: this.pre_selected_photos });    
+    
+    if (this.state.currentSpeakerId < 3) {
+      this.setState({ currentSpeakerId: this.state.currentSpeakerId + 1 })
+    }
+    else if (this.state.currentSpeakerId == 3) {
       this.setState({button: 'Complete'})
       this.setState({label: ''})
     }
+    if (this.state.button == "Complete") {
+      alert('completed!');
+    }
+    
+    let pre_photos = [];
+    photo_sources.map((photo) => {
+      if(getIndex(this.pre_selected_photos, photo) == -1) {
+        pre_photos.push(photo);
+      }
+    });
+    this.setState({photos: pre_photos});
+    
   }
   render() {
     return (
