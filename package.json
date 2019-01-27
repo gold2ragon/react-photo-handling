@@ -1,0 +1,21 @@
+{
+  "name": "react-photo-gallery-with-custom-image-component",
+  "version": "0.0.28",
+  "description": "example using a custom image component to display the photos in the gallery",
+  "keywords": [],
+  "main": "index.js",
+  "dependencies": {
+    "react": "16.7.0",
+    "react-dom": "16.7.0",
+    "react-photo-gallery": "6.3.0"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
