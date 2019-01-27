@@ -1,13 +1,15 @@
 import React from "react";
 import { render } from "react-dom";
 import Gallery from "react-photo-gallery";
+import ImageGallery from "./ImageGallery";
 import SelectedImage from "./SelectedImage";
 
 const speakers = [
   'Peter',
   'Tony',
   'John',
-  'Unknow/NA'
+  'Unknow/NA',
+  ''
 ];
 const photo_sources = [
   { src: process.env.PUBLIC_URL + '/images/Unknown0_127.jpg', width: 1, height: 1 },
@@ -46,6 +48,7 @@ class App extends React.Component {
     this.pre_selected_photos = [];
     this.speakers = speakers;
     this.selectPhoto = this.selectPhoto.bind(this);
+    this.RemoveSelected = this.RemoveSelected.bind(this);
     this.Next = this.Next.bind(this);
   }
   
@@ -71,10 +74,10 @@ class App extends React.Component {
   Next() {
     this.setState({ selected_photos: this.pre_selected_photos });    
     
-    if (this.state.currentSpeakerId < 3) {
+    // if (this.state.currentSpeakerId < 3) {
       this.setState({ currentSpeakerId: this.state.currentSpeakerId + 1 })
-    }
-    else if (this.state.currentSpeakerId == 3) {
+    // }
+    if (this.state.currentSpeakerId == 3) {
       this.setState({button: 'Complete'})
       this.setState({label: ''})
     }
@@ -85,17 +88,25 @@ class App extends React.Component {
     let pre_photos = [];
     photo_sources.map((photo) => {
       if(getIndex(this.pre_selected_photos, photo) == -1) {
+        photo.selected = false;
         pre_photos.push(photo);
       }
     });
     this.setState({photos: pre_photos});
     
   }
+  RemoveSelected(event, obj) {
+    
+    let selected_photos = this.state.selected_photos;
+    console.log(obj.photo);
+    selected_photos.splice(getIndex(selected_photos, obj.photo), 1);
+    this.setState({selected_photos: selected_photos});
+  }
   render() {
     return (
       <div>
         <p>
-          <p></p>
+          <p>{this.state.label}</p>
           <h1>{this.speakers[this.state.currentSpeakerId]}</h1>
           <button className="toggle-select" onClick={this.Next}>
             {this.state.button}
@@ -104,11 +115,13 @@ class App extends React.Component {
         <Gallery
           photos={this.state.selected_photos}
           columns="12"
+          ImageComponent={SelectedImage}
+          onClick={this.RemoveSelected}
         />
         <Gallery
           photos={this.state.photos}
           onClick={this.selectPhoto}
-          ImageComponent={SelectedImage}
+          ImageComponent={ImageGallery}
           direction={"column"}
           columns="8"
         />
