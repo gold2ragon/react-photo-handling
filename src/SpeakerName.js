@@ -11,11 +11,11 @@ const hidden = {
 
 const SpeakerName = ({ speaker }) => {
 	return (
-        <h1 
+        <h3 
             style = { speaker.visible ? { ...shown } : { ...hidden } }
         >
             {speaker.name}
-        </h1>
+        </h3>
     );
 };
 

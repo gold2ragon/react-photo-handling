@@ -28,21 +28,19 @@ const cont = {
 	position: 'relative',
 };
 const divStyle = {
-    margin: '20px',
     outline: 'none',
-    // height: photo.height - 40,
-    // width: photo.width - 40,
 };
 const selectedDivStyle = {
-    outline: '#72d4a9 solid 7px',
 };
 const SelectedImage = ({ index, onClick, photo, margin, direction, top, left }) => {
 	//calculate x,y scale
 	// const sx = (100 - (30 / photo.width) * 100) / 100;
 	// const sy = (100 - (30 / photo.height) * 100) / 100;
     //   selectedImgStyle.transform = `translateZ(0px) scale3d(${sx}, ${sy}, 1)`;
-    divStyle.width = photo.width - 40;
-    divStyle.height = photo.height - 40;
+    divStyle.width = photo.width * 0.8;
+    divStyle.height = photo.height * 0.8;
+    divStyle.margin = photo.width * 0.1;
+    selectedDivStyle.outline = '#72d4a9 solid ' + photo.width * 0.05 + 'px'; 
 
 	if (direction === 'column') {
 		cont.position = 'absolute';

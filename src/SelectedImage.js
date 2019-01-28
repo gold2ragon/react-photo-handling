@@ -66,14 +66,14 @@ const SelectedImage = ({
       <div
         style = {
           {
-            width: "24px",
-            height: "24px",
+            width: photo.width * 0.2,
+            height: photo.width * 0.2,
             position: "absolute",
             right: "0",
             background: "#d8d8d8",
             borderRadius: "15px",
             textAlign: "center",
-            fontSize: "19px"
+            fontSize: photo.width * 0.17
           }
         }
         onClick={e => onClick(e, { index, photo })}
