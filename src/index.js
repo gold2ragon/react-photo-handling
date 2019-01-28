@@ -3,13 +3,14 @@ import { render } from "react-dom";
 import Gallery from "react-photo-gallery";
 import ImageGallery from "./ImageGallery";
 import SelectedImage from "./SelectedImage";
+import SpeakerName from "./SpeakerName";
 
 const speakers = [
-  'Peter',
-  'Tony',
-  'John',
-  'Unknow/NA',
-  ''
+  { name: 'Peter', visible: false },
+  { name: 'Tony', visible: false },
+  { name: 'John', visible: false },
+  { name: 'Unknow/NA', visible: false },
+  { name: '', visible: false },
 ];
 const photo_sources = [
   { src: process.env.PUBLIC_URL + '/images/Unknown0_127.jpg', width: 1, height: 1 },
@@ -35,17 +36,24 @@ const getIndex = (array, obj) => {
   }
   return -1;
 }
+const shown = {
+  display: "block"
+};
+
+const hidden = {
+  display: "none"
+}
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       photos: photos,
-      selected_photos: selected_photos,
+      selected_photos: [[], [], [], []],
       currentSpeakerId: 0, 
       button: 'Next', 
       label:'select all images with' 
     };
-    this.pre_selected_photos = [];
+    this.pre_selected_photos = [[], [], [], []];
     this.speakers = speakers;
     this.selectPhoto = this.selectPhoto.bind(this);
     this.RemoveSelected = this.RemoveSelected.bind(this);
@@ -53,72 +61,104 @@ class App extends React.Component {
   }
   
   selectPhoto(event, obj) {
+    if(this.state.currentSpeakerId == 4) return;
     let photos = this.state.photos;
-    
     this.pre_selected_photos = JSON.parse(JSON.stringify(this.pre_selected_photos));
     photos[obj.index].selected = !photos[obj.index].selected;
     if(photos[obj.index].selected) {
       obj.photo.speaker = this.speakers[this.state.currentSpeakerId];
-      this.pre_selected_photos.push(obj.photo);
+      this.pre_selected_photos[this.state.currentSpeakerId].push(obj.photo);
     }
     else {
-      this.pre_selected_photos.splice(getIndex(this.pre_selected_photos, obj.photo), 1);
+      this.pre_selected_photos[this.state.currentSpeakerId].splice(getIndex(this.pre_selected_photos[this.state.currentSpeakerId], obj.photo), 1);
     }    
     this.setState({ photos: photos });
   }
-  toggleSelect() {
-    let photos = this.state.photos.map((photo, index) => {
-      return { ...photo, selected: !this.state.selectAll };
-    });
-    this.setState({ photos: photos, selectAll: !this.state.selectAll });
-  }
   Next() {
-    this.setState({ selected_photos: this.pre_selected_photos });    
-    
-    // if (this.state.currentSpeakerId < 3) {
-      this.setState({ currentSpeakerId: this.state.currentSpeakerId + 1 })
-    // }
     if (this.state.currentSpeakerId == 3) {
-      this.setState({button: 'Complete'})
-      this.setState({label: ''})
+      this.state.button = 'Complete';
+      this.state.label = '';
     }
-    if (this.state.button == "Complete") {
+    else if (this.state.button == "Complete") {
       alert('completed!');
+    }
+    this.speakers[this.state.currentSpeakerId].visible = true;
+
+    let newState = JSON.parse(JSON.stringify(this.state));
+    
+    if(this.state.currentSpeakerId < 4) {
+      newState.selected_photos[newState.currentSpeakerId] = this.pre_selected_photos[newState.currentSpeakerId]
+      newState.currentSpeakerId = this.state.currentSpeakerId + 1;
     }
     
     let pre_photos = [];
     photo_sources.map((photo) => {
-      if(getIndex(this.pre_selected_photos, photo) == -1) {
+      let exist = false;
+      newState.selected_photos.map((speakerPhotos) => {
+        if(!exist && getIndex(speakerPhotos, photo) >= 0) {
+          exist = true;
+          return;
+        }
+      });
+      if(!exist) {
         photo.selected = false;
         pre_photos.push(photo);
       }
+      
     });
-    this.setState({photos: pre_photos});
-    
+    newState.photos = pre_photos;
+
+    this.setState(newState);    
   }
   RemoveSelected(event, obj) {
-    
+    console.log('removed');
     let selected_photos = this.state.selected_photos;
-    console.log(obj.photo);
-    selected_photos.splice(getIndex(selected_photos, obj.photo), 1);
+    selected_photos.map((speakerPhotos) => {
+      let index = getIndex(speakerPhotos, obj.photo);
+      if(index >= 0) speakerPhotos.splice(index, 1);
+    });
     this.setState({selected_photos: selected_photos});
   }
+  
   render() {
+    
     return (
       <div
         style = {
           { textAlign: "center"}
         }
       >
+        <SpeakerName speaker={this.speakers[0]} />
         <Gallery
-          photos={this.state.selected_photos}
+          photos={this.state.selected_photos[0]}
+          columns="12"
+          ImageComponent={SelectedImage}
+          onClick={this.RemoveSelected}
+        />
+        <SpeakerName speaker={this.speakers[1]} />
+        <Gallery
+          photos={this.state.selected_photos[1]}
+          columns="12"
+          ImageComponent={SelectedImage}
+          onClick={this.RemoveSelected}
+        />
+        <SpeakerName speaker={this.speakers[2]} />
+        <Gallery
+          photos={this.state.selected_photos[2]}
+          columns="12"
+          ImageComponent={SelectedImage}
+          onClick={this.RemoveSelected}
+        />
+        <SpeakerName speaker={this.speakers[3]} />
+        <Gallery
+          photos={this.state.selected_photos[3]}
           columns="12"
           ImageComponent={SelectedImage}
           onClick={this.RemoveSelected}
         />
         <p>
           <p>{this.state.label}</p>
-          <h1>{this.speakers[this.state.currentSpeakerId]}</h1>
+          <h1>{this.speakers[this.state.currentSpeakerId].name}</h1>
           <button style={{backgroundColor: "#72d4a9", padding: "10px 40px", color: "white", fontSize:"22px", fontWeight: "bold", outline: "none"}} onClick={this.Next}>
             {this.state.button}
           </button>
