@@ -87,7 +87,6 @@ const SelectedImage = ({
             : { ...imgStyle }
         }
         {...photo}
-        onClick={e => onClick(e, { index, photo })}
       />
       <style>{`.not-selected:hover{outline:2px solid #06befa}`}</style>
     </div>

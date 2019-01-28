@@ -7,6 +7,8 @@
 
 ### Run Project
 ```console
+git clone https://github.com/jprcoder/react-photo-handling.git
+cd react-photo-handling
 npm install
 npm start
 ```

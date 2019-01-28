@@ -58,6 +58,7 @@ class App extends React.Component {
     this.pre_selected_photos = JSON.parse(JSON.stringify(this.pre_selected_photos));
     photos[obj.index].selected = !photos[obj.index].selected;
     if(photos[obj.index].selected) {
+      obj.photo.speaker = this.speakers[this.state.currentSpeakerId];
       this.pre_selected_photos.push(obj.photo);
     }
     else {
@@ -104,20 +105,25 @@ class App extends React.Component {
   }
   render() {
     return (
-      <div>
-        <p>
-          <p>{this.state.label}</p>
-          <h1>{this.speakers[this.state.currentSpeakerId]}</h1>
-          <button className="toggle-select" onClick={this.Next}>
-            {this.state.button}
-          </button>
-        </p>
+      <div
+        style = {
+          { textAlign: "center"}
+        }
+      >
         <Gallery
           photos={this.state.selected_photos}
           columns="12"
           ImageComponent={SelectedImage}
           onClick={this.RemoveSelected}
         />
+        <p>
+          <p>{this.state.label}</p>
+          <h1>{this.speakers[this.state.currentSpeakerId]}</h1>
+          <button style={{backgroundColor: "#72d4a9", padding: "10px 40px", color: "white", fontSize:"22px", fontWeight: "bold", outline: "none"}} onClick={this.Next}>
+            {this.state.button}
+          </button>
+        </p>
+        
         <Gallery
           photos={this.state.photos}
           onClick={this.selectPhoto}
